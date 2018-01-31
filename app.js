@@ -11,6 +11,14 @@ var express = require('express'),
     store = new express.session.MemoryStore,
     path = require('path');
 
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    next();
+}
+
 var app = express();
 
 app.engine('ejs', engine)
@@ -19,13 +27,14 @@ app.configure(function() {
 
     app.set('template_engine', 'ejs');
     // app.set('domain', domain);
-    app.set('port', process.env.PORT || 8080);
+    app.set('port', process.env.PORT || 8081);
     app.set('views', __dirname + '/views');
     app.set('view engine', template_engine);
     app.use(express.favicon());
     app.use(express.logger('dev'));
     app.use(express.bodyParser());
     app.use(express.methodOverride());
+    app.use(allowCrossDomain);
     // app.use(express.cookieParser('wigglybits'));
     // app.use(express.session({
     //     secret: 'whatever',
@@ -73,11 +82,11 @@ app.get("/state", function(req, res) {
 })
 app.get("/stateOn", function(req, res) {
     theState = "ON";
-    res.send("State set to ON   ");        
+    res.send("State set to ON   ");
 })
 app.get("/stateOff", function(req, res) {
     theState = "OFF";
-    res.send("State set to OFF");    
+    res.send("State set to OFF");
 })
 
 
